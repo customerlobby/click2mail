@@ -23,5 +23,6 @@ Gem::Specification.new do |spec|
   spec.add_development_dependency "rspec"
   spec.add_development_dependency "byebug"
 
+  spec.add_dependency "xml-simple", "~>1.1.3"
   spec.add_dependency "rest-client", "~> 1.6.7"
 end

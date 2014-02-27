@@ -11,8 +11,8 @@ module Click2Mail
 
     def self.default_config
       return {
-        username:       'user',
-        password:       'password',
+        username:       'Customerlobby',
+        password:       'RvjpCKP42iCDZa',
         target:         'stage-batch',
       }
     end

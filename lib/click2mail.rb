@@ -1,4 +1,5 @@
 require 'rest-client'
+require 'xmlsimple'
 
 def strip_for_require(file_name)
   file_name.gsub(/\.rb$/,'').gsub(/lib\//,'')

@@ -10,52 +10,62 @@ module Click2Mail
 
       response = BatchAPI.submit_url(url)
 
-      # TODO logging
-      case response.code
-      when 201
-        return BatchResponse.new(response.body)
-      when 400
-        return 'ERROR'
-      end
+      return handle_response(response)
     end
 
-    def upload_batch_xml(xml)
+    def upload_xml(batch_id, xml)
       # curl -X PUT https://{username}:{password}@batch.click2mail.com/v1//batches/{batch_id} -H "Content-Type: application/xml" --data-binary "@{filename_of_xml}"
-      url = BatchAPI.build_base_url(@configuration)
+      url = "#{BatchAPI.build_base_url(@configuration)}/#{batch_id}"
       content_type = "application/xml"
       response = BatchAPI.submit_stream(url, xml, content_type)
 
-      # TODO logging
-      case response.code
-      when 201
-        return BatchResponse.new(response.body)
-      when 400
-        return 'ERROR'
-      end
+      return handle_response(response)
     end
 
-    def upload_batch_pdf(pdf)
+    def upload_pdf(batch_id, pdf)
       # curl -X PUT http://{username}:{password}@batch.click2mail.com/v1/batches/{batch_id} -H "Content-Type: application/pdf" --data-binary "@{filename_of_pdf}"
-      url = BatchAPI.build_base_url(@configuration)
-      content_type = "application/xml"
+      url = "#{BatchAPI.build_base_url(@configuration)}/#{batch_id}"
+      content_type = "application/pdf"
       response = BatchAPI.submit_stream(url, pdf, content_type)
 
-      # TODO logging
-      case response.code
-      when 201
-        return BatchResponse.new(response.body)
-      when 400
-        return 'ERROR'
-      end
+      return handle_response(response)
     end
 
     def submit(batch_id)
       # curl -X POST http://{username}:{password}@batch.click2mail.com/v1/batches/{batch_id}
-      url = "#{BatchAPI.build_base_url}(@configuration)/#{batch_id}"
+      url = "#{BatchAPI.build_base_url(@configuration)}/#{batch_id}"
 
       response = BatchAPI.submit_url(url)
 
-      # TODO logging
+      return handle_response(response)
+    end
+
+    def status(batch_id)
+      # curl GET http://{username}:{password}@batch.click2mail.com/v1/batches/{batch_id}
+      url = "#{BatchAPI.build_base_url(@configuration)}/#{batch_id}"
+
+      response = RestClient.get url
+
+      return handle_response(response)
+    end
+
+    def self.create_batch(configuration, xml, pdf)
+      c2m = Click2Mail.new(configuration)
+      batch_response = c2m.create
+
+      c2m.upload_xml batch_response.id, xml
+      c2m.upload_pdf batch_response.id, pdf
+
+      submit batch_response.id
+
+      return batch_response
+    end
+
+    private
+
+    def handle_response(response)
+      puts response.inspect
+      puts response.code
       case response.code
       when 201
         return BatchResponse.new(response.body)
@@ -63,18 +73,6 @@ module Click2Mail
         return 'ERROR'
       end
     end
-
-    def self.create_batch(configuration, xml, pdf)
-      c2m = Click2Mail.new(configuration)
-      batch_id = c2m.create
-      c2m.upload_batch_xml(xml)
-      c2m.upload_batch_pdf(pdf)
-      submit(batch_id)
-
-      return batch_id
-    end
-
-    private
 
     def self.build_base_url(configuration)
       username = configuration.username
@@ -86,14 +84,18 @@ module Click2Mail
 
     def self.submit_url(url)
       puts "Submitting #{url}"
-      response = RestClient.get url
+      response = RestClient.post url, nil
       puts "Response: #{response}"
 
       return response
     end
 
     def self.submit_stream(url, stream, content_type)
+      puts "Submitting #{url}"
+      response = RestClient.put url, File.read(stream), :content_type=>content_type
+      puts "Response: #{response.inspect}"
 
+      return response
     end
   end
 end

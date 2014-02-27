@@ -1,8 +1,10 @@
 class BatchResponse
   attr_accessor :id,
-                :status,
-                :description,
-                :statusurl
+                :created_at,
+                :error_message,
+                :has_errors,
+                :received,
+                :submitted
   def initialize(batch_response_xml='')
     parse(batch_response_xml)
   end
@@ -10,11 +12,13 @@ class BatchResponse
   def parse(batch_response_xml='')
     return if batch_response_xml.empty?
 
-    puts batch_response_xml
+    data = XmlSimple.xml_in(batch_response_xml)
 
-    @id = -1
-    @status = 'temporary'
-    @description = "Josh's mock"
-    @statusurl = "http://joshuavolz.com/"
+    @id =            data["id"].first.to_i
+    @created_at =    Date.parse(data["createdAt"].first)
+    @error_message = data["errorMessage"]
+    @has_errors =    data["hasErrors"] == "true"
+    @received =      data["received"] == "true"
+    @submitted =     data["submitted"] == "true"
   end
 end
