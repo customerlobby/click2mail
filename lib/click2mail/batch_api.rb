@@ -16,7 +16,7 @@ module Click2Mail
     def upload_xml(batch_id, xml)
       # curl -X PUT https://{username}:{password}@batch.click2mail.com/v1//batches/{batch_id} -H "Content-Type: application/xml" --data-binary "@{filename_of_xml}"
       url = "#{BatchAPI.build_base_url(@configuration)}/#{batch_id}"
-      content_type = "application/xml"
+      content_type = :xml
       response = BatchAPI.submit_stream(url, xml, content_type)
 
       return handle_response(response)
@@ -25,8 +25,8 @@ module Click2Mail
     def upload_pdf(batch_id, pdf)
       # curl -X PUT http://{username}:{password}@batch.click2mail.com/v1/batches/{batch_id} -H "Content-Type: application/pdf" --data-binary "@{filename_of_pdf}"
       url = "#{BatchAPI.build_base_url(@configuration)}/#{batch_id}"
-      content_type = "application/pdf"
-      response = BatchAPI.submit_stream(url, pdf, content_type)
+      content_type = :pdf
+      response = BatchAPI.submit_stream(url, File.open(pdf,'rb'), content_type)
 
       return handle_response(response)
     end
@@ -64,14 +64,16 @@ module Click2Mail
     private
 
     def handle_response(response)
-      puts response.inspect
-      puts response.code
+      require 'byebug'
+      byebug
       case response.code
+      when 200
+        return "SUCCESS"
       when 201
         return BatchResponse.new(response.body)
       when 400
         return 'ERROR'
-      end
+    end
     end
 
     def self.build_base_url(configuration)
@@ -92,9 +94,14 @@ module Click2Mail
 
     def self.submit_stream(url, stream, content_type)
       puts "Submitting #{url}"
-      response = RestClient.put url, File.read(stream), :content_type=>content_type
-      puts "Response: #{response.inspect}"
 
+      begin
+        response = RestClient.put url, stream.read, :content_type=>content_type
+      rescue => e
+        response = e.response
+      end
+
+      puts "Response: #{response.inspect}"
       return response
     end
   end

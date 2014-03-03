@@ -1,6 +1,7 @@
 require 'spec_helper.rb'
 require 'byebug'
 require 'click2mail'
+require 'stringio'
 
 describe Click2Mail::BatchAPI, "create" do
   it "should return a BatchResponse" do
@@ -22,8 +23,8 @@ describe Click2Mail::BatchAPI, "create and submit PDF" do
     c2m = Click2Mail::BatchAPI.new(configuration)
     response = c2m.create
 
-    upload_response = c2m.upload_pdf response.id, "assets/test_postcard.pdf"
-    upload_response.should be_nil
+    upload_response = c2m.upload_pdf response.id, File.open("assets/test_postcard.pdf", "rb")
+    upload_response.should eq("SUCCESS")
 
     status = c2m.status response.id
     status.has_errors.should eq(false)
@@ -32,17 +33,61 @@ describe Click2Mail::BatchAPI, "create and submit PDF" do
   end
 end
 
-__END__
-describe Click2Mail::BatchAPI, "create, submit PDF, submit XML" do
-  it "should create a new job and submit the PDF and XML" do
+describe Click2Mail::BatchAPI, "create, submit XML" do
+  it "should create a new job and submit broken XML and catch the failure" do
     configuration = Click2Mail::Configuration.new
     c2m = Click2Mail::BatchAPI.new(configuration)
     response = c2m.create
 
-    upload_response = c2m.upload_pdf response.id, "assets/test_postcard.pdf"
-    upload_response.should be_nil
+    upload_response = c2m.upload_xml response.id, StringIO.new("broken xml document </")
+    upload_response.class.should_not eq(BatchResponse)
+  end
 
+  it "should create a new job and submit XML" do
+    configuration = Click2Mail::Configuration.new
+    c2m = Click2Mail::BatchAPI.new(configuration)
+    response = c2m.create
 
+    upload_response = c2m.upload_xml response.id, File.open("assets/address-ace.xml")
+    upload_response.should eq("SUCCESS")
+  end
+
+  it "should create a new job and submit broken XML and catch the failure" do
+    configuration = Click2Mail::Configuration.new
+    c2m = Click2Mail::BatchAPI.new(configuration)
+    response = c2m.create
+
+    upload_response = c2m.upload_xml response.id, File.open("assets/address-ace.xml")
+    upload_response.should eq("SUCCESS")
+
+    status = c2m.status response.id
+    status.has_errors.should eq(false)
+    status.received.should eq(false)
+    status.submitted.should eq(false)
+  end
+end
+
+describe Click2Mail::BatchAPI, "create, submit XML, PDF, then submit the entire job, check status", :focus=>true do
+  it "should do everything" do
+  configuration = Click2Mail::Configuration.new
+  c2m = Click2Mail::BatchAPI.new(configuration)
+  response = c2m.create
+
+  batch_id = response.id
+
+  upload_response = c2m.upload_xml batch_id, File.open("assets/address-ace.xml")
+  upload_response.should eq("SUCCESS")
+
+  upload_response = c2m.upload_pdf batch_id, File.open("assets/test_postcard.pdf", "rb")
+  upload_response.should eq("SUCCESS")
+
+  response = c2m.submit batch_id
+  puts response.inspect
+
+  status = c2m.status batch_id
+  status.has_errors.should eq(false)
+  status.received.should eq(true)
+  status.submitted.should eq(true)
 
   end
 end
