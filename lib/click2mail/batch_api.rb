@@ -64,14 +64,13 @@ module Click2Mail
     private
 
     def handle_response(response)
-      require 'byebug'
-      byebug
       case response.code
       when 200
         return "SUCCESS"
       when 201
         return BatchResponse.new(response.body)
       when 400
+        puts "Error: #{response.body}"
         return 'ERROR'
     end
     end
@@ -85,23 +84,18 @@ module Click2Mail
     end
 
     def self.submit_url(url)
-      puts "Submitting #{url}"
       response = RestClient.post url, nil
-      puts "Response: #{response}"
 
       return response
     end
 
     def self.submit_stream(url, stream, content_type)
-      puts "Submitting #{url}"
-
       begin
         response = RestClient.put url, stream.read, :content_type=>content_type
       rescue => e
         response = e.response
       end
 
-      puts "Response: #{response.inspect}"
       return response
     end
   end

@@ -15,25 +15,25 @@ class ReturnAddress
 
   def to_hash
     {
-      "name"         => @name,
-      "organization" => @organization,
-      "address1"     => @address1,
-      "address2"     => @address2,
-      "city"         => @city,
-      "state"        => @state,
-      "postalCode"   => @postal_code,
+      "name"         => [@name],
+      "organization" => [@organization],
+      "address1"     => [@address1],
+      "address2"     => [@address2],
+      "city"         => [@city],
+      "state"        => [@state],
+      "postalCode"   => [@postal_code],
     }
   end
 
   def self.example
     return ReturnAddress.new({
-      name: '',
-      organization: '',
-      address1: '',
-      address2: '',
-      city: '',
-      state: '',
-      postal_code: '',
+      name:         'Name',
+      organization: 'Organiztion',
+      address1:     'address1',
+      address2:     'address2',
+      city:         'city',
+      state:        'state',
+      postal_code:  'postal code',
     })
   end
 end

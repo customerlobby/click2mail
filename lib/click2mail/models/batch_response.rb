@@ -16,9 +16,9 @@ class BatchResponse
 
     @id =            data["id"].first.to_i
     @created_at =    Date.parse(data["createdAt"].first)
-    @error_message = data["errorMessage"]
-    @has_errors =    data["hasErrors"] == "true"
-    @received =      data["received"] == "true"
-    @submitted =     data["submitted"] == "true"
+    @error_message = data["errorMessage"].first
+    @has_errors =    data["hasErrors"].first == "true"
+    @received =      data["received"].first == "true"
+    @submitted =     data["submitted"].first == "true"
   end
 end
