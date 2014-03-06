@@ -1,4 +1,4 @@
-module Click2mail
+module Click2Mail
   class Address
     attr_accessor :name,
                   :organization,

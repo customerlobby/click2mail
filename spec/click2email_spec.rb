@@ -8,7 +8,7 @@ describe Click2Mail::BatchAPI, "create" do
     configuration = Click2Mail::Configuration.new
     c2m = Click2Mail::BatchAPI.new(configuration)
     response = c2m.create
-    response.class.should eq(BatchResponse)
+    response.class.should eq(Click2Mail::BatchResponse)
 
     response.id.should_not be_nil
     response.has_errors.should eq(false)
@@ -40,7 +40,7 @@ describe Click2Mail::BatchAPI, "create, submit XML" do
     response = c2m.create
 
     upload_response = c2m.upload_xml response.id, StringIO.new("broken xml document </")
-    upload_response.class.should_not eq(BatchResponse)
+    upload_response.class.should_not eq(Click2Mail::BatchResponse)
 
     status = c2m.status response.id
     status.has_errors.should eq(true)
@@ -105,7 +105,7 @@ describe Click2Mail::BatchAPI, "create, submit created XML, PDF, then submit the
   batch_id = response.id
 
 
-  xml = XmlSimple.xml_out( Batch.example(configuration).to_hash , "RootName"=>"batch")
+  xml = XmlSimple.xml_out( Click2Mail::Batch.example(configuration).to_hash , "RootName"=>"batch")
 
   xml_handle = StringIO.new(xml)
 

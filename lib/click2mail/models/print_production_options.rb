@@ -1,4 +1,4 @@
-module Click2mail
+module Click2Mail
   class PrintProductionOptions
     attr_accessor :document_class,
                   :layout,

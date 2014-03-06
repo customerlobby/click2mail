@@ -1,4 +1,4 @@
-module Click2mail
+module Click2Mail
   class Job
     attr_accessor :starting_page,
                   :ending_page,

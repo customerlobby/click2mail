@@ -1,4 +1,4 @@
-module Click2mail
+module Click2Mail
   class JobStatus
     attr_accessor :invoice,
                   :job_id,

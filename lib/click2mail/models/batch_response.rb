@@ -1,4 +1,4 @@
-module Click2mail
+module Click2Mail
   class BatchResponse
     attr_accessor :id,
                   :created_at,

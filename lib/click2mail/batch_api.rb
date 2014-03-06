@@ -68,7 +68,7 @@ module Click2Mail
       when 200
         return "SUCCESS"
       when 201
-        return BatchResponse.new(response.body)
+        return Click2Mail::BatchResponse.new(response.body)
       when 400
         puts "Error: #{response.body}"
         return 'ERROR'

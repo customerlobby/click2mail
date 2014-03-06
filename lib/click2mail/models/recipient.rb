@@ -1,4 +1,4 @@
-module Click2mail
+module Click2Mail
   class Recipient
     attr_accessor :addresses
 
