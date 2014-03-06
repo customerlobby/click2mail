@@ -1,14 +1,16 @@
-class Recipient
-  attr_accessor :addresses
+module Click2mail
+  class Recipient
+    attr_accessor :addresses
 
-  def to_hash
-    return {:address => @addresses.map(&:to_hash)}
-  end
+    def to_hash
+      return {:address => @addresses.map(&:to_hash)}
+    end
 
-  def self.example
-    ex = Recipient.new
-    ex.addresses = [ Address.example]
+    def self.example
+      ex = Recipient.new
+      ex.addresses = [ Address.example]
 
-    return ex
+      return ex
+    end
   end
 end
