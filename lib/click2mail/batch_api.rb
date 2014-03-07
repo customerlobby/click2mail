@@ -78,7 +78,7 @@ module Click2Mail
     def self.build_base_url(configuration)
       username = configuration.username
       password = configuration.password
-      target   = configuration.target
+      target   = configuration.batch_target
 
       return "https://#{username}:#{password}@#{target}.click2mail.com/v1/batches"
     end

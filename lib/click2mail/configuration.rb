@@ -1,7 +1,7 @@
 module Click2Mail
   class Configuration
 
-    attr_accessor :username, :password, :target
+    attr_accessor :username, :password, :batch_target, :soap_target
     def initialize(config={})
       config = Configuration.default_config if config.empty?
       config.each do |k,v|
@@ -13,7 +13,8 @@ module Click2Mail
       return {
         username:       'Customerlobby',
         password:       'RvjpCKP42iCDZa',
-        target:         'stage-batch',
+        batch_target:   'stage-batch',
+        soap_target:    'stage-soap',
       }
     end
 

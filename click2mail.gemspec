@@ -25,4 +25,5 @@ Gem::Specification.new do |spec|
 
   spec.add_dependency "xml-simple", "~>1.1.3"
   spec.add_dependency "rest-client", "~> 1.6.7"
+  spec.add_dependency "savon", "~> 2.0"
 end
