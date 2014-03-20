@@ -34,9 +34,6 @@ describe Click2Mail::BatchAPI do
 
     upload_response = c2m.upload_xml response.id, StringIO.new("broken xml document </")
     upload_response.class.should_not eq(Click2Mail::BatchResponse)
-
-    status = c2m.status response.id
-    status.has_errors.should eq(true)
   end
 
   it "should create a new job and submit XML" do
