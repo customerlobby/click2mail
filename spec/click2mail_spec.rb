@@ -1,7 +1,4 @@
 require 'spec_helper.rb'
-require 'byebug'
-require 'click2mail'
-require 'stringio'
 
 describe Click2Mail::BatchAPI do
   it "create should return a BatchResponse" do
