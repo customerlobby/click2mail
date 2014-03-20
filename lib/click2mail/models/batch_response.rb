@@ -17,8 +17,6 @@ module Click2Mail
 
       data = XmlSimple.xml_in(batch_response_xml)
 
-      puts data
-
       @id =            data["id"].first.to_i
       @created_at =    Date.parse(data["createdAt"].first)
       @error_message = data["errorMessage"].first
